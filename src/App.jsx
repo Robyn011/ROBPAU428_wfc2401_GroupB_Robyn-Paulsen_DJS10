@@ -1,47 +1,46 @@
 import React, { useState, useEffect } from 'react';
 
+// Main App component
 function App() {
-  // State variables to store fetched posts and error messages
-  const [posts, setPosts] = useState([]); // Initialize posts state as an empty array
-  const [error, setError] = useState(null); // Initialize error state as null
+  // State to hold the fetched posts
+  const [posts, setPosts] = useState([]);
+  // State to hold any error that occurs during fetching
+  const [error, setError] = useState(null);
 
-  // useEffect hook to fetch data when component mounts
+  // useEffect hook to fetch data when the component mounts
   useEffect(() => {
-    // Function to fetch data from API
+    // Asynchronous function to fetch data from the API
     const fetchData = async () => {
       try {
-        // Fetch posts data from JSONPlaceholder API
+        // Fetching posts from the API
         const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-        
-        // Check if response is ok; if not, throw an error
+        // Check if the response is not ok (status is not in the range 200-299)
         if (!response.ok) {
           throw new Error(`Error fetching posts: ${response.statusText}`);
         }
-        
-        // Parse response data to JSON format
+        // Parsing the response data as JSON
         const data = await response.json();
-        
-        // Update posts state with fetched data
+        // Setting the fetched posts to the state
         setPosts(data);
       } catch (error) {
-        // Catch any errors that occur during fetching and update error state
+        // If an error occurs, set the error message to the state
         setError(error.message);
       }
     };
 
-    // Call fetchData function when component mounts (empty dependency array ensures it runs only once)
+    // Calling the fetchData function
     fetchData();
-  }, []); // Empty dependency array ensures useEffect runs only on component mount
+  }, []); // Empty dependency array means this effect runs once when the component mounts
 
   return (
     <div>
-      {error ? ( // Conditional rendering: display error message if error state is not null
-        <div>Error: {error}</div>
+      {error ? ( // Conditional rendering based on whether there is an error
+        <div>Error: {error}</div> // Display error message if there is an error
       ) : (
-        posts.map((post) => ( // Map through posts array and render each post as a div
-          <div key={post.id}>
-            <h2>{post.title}</h2> {/* Render post title */}
-            <p>{post.body}</p> {/* Render post body */}
+        posts.map((post, index) => ( // Map over the posts array to render each post
+          <div key={post.id}> {/* Each post needs a unique key */}
+            <h2>{`${index + 1}. ${post.title}`}</h2> {/* Display the post title with a numbered heading */}
+            <p>{post.body}</p> {/* Display the post body */}
           </div>
         ))
       )}
